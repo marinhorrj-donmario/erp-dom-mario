@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <title>ERP Dom Mário 3.2 Produção</title>
+  <style>
+    :root{
+      --bg:#101010; --card:#1d1d1d; --card2:#272727; --text:#fff8ec; --muted:#c9bfae;
+      --gold:#d89b36; --green:#35a853; --red:#d9534f; --blue:#4d8df7; --border:#3b3b3b;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0; font-family:Arial,Helvetica,sans-serif; background:#101010; color:var(--text);
+      padding:12px 12px calc(132px + env(safe-area-inset-bottom));
+    }
+    .app{max-width:1180px;margin:auto}
+    .hero{
+      background:linear-gradient(135deg,#2b1c0d,#141414 55%,#0e0e0e);
+      border:1px solid var(--border); border-radius:20px; padding:18px; margin-bottom:12px;
+    }
+    h1{font-size:24px;margin:0;color:var(--gold)}
+    h2{font-size:20px;margin:0 0 12px;color:var(--gold)}
+    h3{margin:0 0 10px}
+    p{color:var(--muted);margin:8px 0}
+    .section{display:none}.section.active{display:block;padding-bottom:92px;}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:15px;margin-bottom:12px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+    .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .field{margin-bottom:10px}
+    label{display:block;font-size:13px;font-weight:bold;color:var(--muted);margin-bottom:6px}
+    input,select,textarea,button{
+      width:100%;padding:13px;border-radius:12px;border:1px solid var(--border);
+      background:#111;color:var(--text);font-size:16px;
+    }
+    button{background:var(--gold);color:#111;border:none;font-weight:bold;cursor:pointer}
+    .btn2{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+    .btnRed{background:var(--red);color:white}.btnGreen{background:var(--green);color:white}.btnBlue{background:var(--blue);color:white}
+    .actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+    .actions3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:10px}
+    .metric{background:var(--card2);border:1px solid var(--border);border-radius:16px;padding:14px}
+    .metric span{display:block;color:var(--muted);font-size:12px;margin-bottom:7px}
+    .metric strong{font-size:21px;color:var(--gold)}
+    .alert{padding:12px;border-radius:14px;border:1px solid rgba(216,155,54,.45);background:rgba(216,155,54,.10);color:#f4d9aa;margin-bottom:10px}
+    .ok{border-color:rgba(53,168,83,.5);background:rgba(53,168,83,.12);color:#afe8bd}.bad{border-color:rgba(217,83,79,.6);background:rgba(217,83,79,.14);color:#ffb8b4}
+    .small{font-size:13px;color:var(--muted)}
+    .pill{display:inline-block;padding:4px 8px;border-radius:999px;background:#372711;color:var(--gold);font-size:12px;margin:2px}
+    .item.late{border-color:rgba(217,83,79,.8);background:rgba(217,83,79,.12)}
+    .item.warn{border-color:rgba(216,155,54,.8);background:rgba(216,155,54,.10)}
+    .item{
+      background:#171717;border:1px solid var(--border);border-radius:15px;padding:12px;margin-bottom:10px;
+    }
+    .item-top{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .item-title{font-weight:bold;color:var(--gold)}
+    .item-sub{font-size:13px;color:var(--muted);margin-top:4px}
+    .item-row{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}
+    .mini{background:#111;border:1px solid var(--border);border-radius:12px;padding:9px}
+    .mini span{display:block;color:var(--muted);font-size:12px}.mini b{font-size:15px}
+    table{width:100%;border-collapse:collapse;margin-top:10px}
+    th,td{padding:9px;border-bottom:1px solid var(--border);text-align:left;font-size:13px;vertical-align:top}
+    th{color:var(--gold);background:#161616}
+    .wrap{overflow:auto;max-height:520px;border:1px solid var(--border);border-radius:14px}
+    .progress{height:22px;background:#111;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:10px}
+    .progress div{height:100%;background:linear-gradient(90deg,var(--gold),#f3c36b);width:0%;color:#111;font-weight:bold;font-size:12px;display:flex;align-items:center;justify-content:center}
+    .bottom-nav{
+      position:fixed;left:0;right:0;bottom:0;background:#151515;border-top:1px solid var(--border);
+      display:grid;grid-template-columns:repeat(7,1fr);gap:0;z-index:20;padding:7px 4px calc(12px + env(safe-area-inset-bottom));min-height:76px;
+    }
+    .bottom-nav button{
+      background:transparent;color:var(--muted);border:0;border-radius:12px;padding:8px 4px;font-size:11px;
+    }
+    .bottom-nav button.active{background:#2a2013;color:var(--gold)}
+    .bottom-nav .ico{display:block;font-size:20px;line-height:20px;margin-bottom:2px}
+    .desktop-tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+    .desktop-tabs button{width:auto;border-radius:999px;background:var(--card2);color:var(--text);border:1px solid var(--border);padding:10px 13px}
+    .desktop-tabs button.active{background:var(--gold);color:#111}
+    pre{white-space:pre-wrap;background:#111;border:1px solid var(--border);padding:12px;border-radius:14px;color:#f4d9aa;overflow:auto;max-height:360px}
+    @media(max-width:760px){
+      body{padding:10px 10px calc(145px + env(safe-area-inset-bottom))}
+      .desktop-tabs{display:none}
+      .grid,.grid4{grid-template-columns:1fr}
+      .hero{padding:15px}
+      h1{font-size:22px}
+      .metric strong{font-size:20px}
+      .hide-mobile{display:none!important}
+      table.desktop-table{display:none}
+    }
+    @media(min-width:761px){
+      .bottom-nav{display:none}
+      body{padding-bottom:20px}
+      .mobile-list-only{display:none}
+    }
+  </style>
+</head>
+<body>
+<div class="app">
+  <div class="hero">
+    <h1>ERP Dom Mário 3.2 Produção</h1>
+    <p>Vendas, clientes, produção, edição de entrega e fila sincronizada via Google Sheets.</p>
+    <div id="statusSync" class="alert">Modo local. Configure o Google Sheets.</div>
+  </div>
+
+  <div class="desktop-tabs">
+    <button class="tab active" onclick="aba('dashboard',this)">Dashboard</button>
+    <button class="tab" onclick="aba('vendas',this)">Venda</button>
+    <button class="tab" onclick="aba('producao',this)">Produção</button>
+    <button class="tab" onclick="aba('operacao',this)">Operação</button>
+    <button class="tab" onclick="aba('clientes',this)">Clientes</button>
+    <button class="tab" onclick="aba('cardapio',this)">CMV</button>
+    <button class="tab" onclick="aba('sync',this)">Sheets</button>
+    <button class="tab" onclick="aba('relatorios',this)">Relatórios</button>
+  </div>
+
+  <section id="dashboard" class="section active">
+    <div class="card">
+      <h2>Resumo</h2>
+      <div class="grid">
+        <div class="field"><label>Data inicial</label><input type="date" id="filtroInicio" onchange="render()"></div>
+        <div class="field"><label>Data final</label><input type="date" id="filtroFim" onchange="render()"></div>
+      </div>
+      <div class="field"><label>Cliente</label><select id="filtroCliente" onchange="render()"></select></div>
+    </div>
+
+    <div class="grid4">
+      <div class="metric"><span>Faturamento</span><strong id="fat">R$ 0,00</strong></div>
+      <div class="metric"><span>Lucro bruto</span><strong id="lucro">R$ 0,00</strong></div>
+      <div class="metric"><span>Pizzas</span><strong id="pizzas">0</strong></div>
+      <div class="metric"><span>Clientes</span><strong id="clientesAtendidos">0</strong></div>
+    </div>
+
+    <div class="card">
+      <h2>Meta semanal</h2>
+      <div class="field"><label>Meta</label><input type="number" id="metaSemanalDash" onchange="salvarConfigDash()"></div>
+      <div class="progress"><div id="barraMeta">0%</div></div>
+      <p id="txtMeta" class="small"></p>
+    </div>
+
+    <div class="card"><h2>Clientes mais fiéis</h2><div id="rankingClientes"></div></div>
+    <div class="card"><h2>Sabores mais vendidos</h2><div id="ranking"></div></div>
+    <div class="card"><h2>Vendas por dia</h2><div id="porDia"></div></div>
+  </section>
+
+  <section id="vendas" class="section">
+    <div class="card" id="cardMassasVenda">
+      <h2>Massas de hoje</h2>
+      <div id="massasVendaResumo" class="alert"></div>
+      <div class="grid">
+        <div class="field"><label>Meta de pizzas do dia</label><input type="number" id="metaDiaVenda" min="0" value="15" oninput="salvarMetaDiaVenda()"></div>
+        <div class="field"><label>Massas produzidas hoje</label><input type="number" id="massasHojeVenda" min="0" value="0" oninput="atualizarMassasHojeVenda()"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Novo pedido</h2>
+      <div class="grid">
+        <div class="field"><label>Data</label><input type="date" id="data"></div>
+        <div class="field">
+          <label>Tipo</label>
+          <select id="tipo" onchange="aplicarTipo()">
+            <option value="">Escolher tipo</option><option>Pizza avulsa</option><option>Combo 2 pizzas</option><option>Combo 3 pizzas</option><option>Combo personalizado</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="grid">
+        <div class="field"><label>Horário de entrega</label><input type="time" id="horarioEntrega"></div>
+        <div class="field"><label>Status</label><select id="statusPedido"><option>Novo</option><option>Em preparo</option><option>Pronto</option><option>Saiu para entrega</option><option>Entregue</option><option>Cancelado</option></select></div>
+      </div>
+
+      <div class="actions3">
+        <button onclick="combo2()">Combo 2<br>59,90</button>
+        <button onclick="combo3()">Combo 3<br>89,90</button>
+        <button class="btn2" onclick="avulsa()">Avulsa</button>
+      </div>
+
+      <div class="field"><label>Cliente cadastrado</label><select id="clienteId" onchange="preencherClientePedido()"></select></div>
+      <div class="grid">
+        <div class="field"><label>Nome do cliente</label><input id="clienteNomePedido" placeholder="Ex: João casa 42"></div>
+        <div class="field"><label>Telefone</label><input id="telefonePedido" placeholder="WhatsApp"></div>
+      </div>
+
+      <div class="grid">
+        <div class="field"><label>Quantidade</label><input type="number" id="qtd" min="1" value="1" oninput="previa()"></div>
+        <div class="field"><label>Valor recebido R$</label><input type="number" id="valor" step="0.01" oninput="previa()"></div>
+      </div>
+
+      <div class="field"><label>Sabor 1</label><select id="s1" onchange="previa()"></select></div>
+      <div class="field"><label>Sabor 2</label><select id="s2" onchange="previa()"></select></div>
+      <div class="field"><label>Sabor 3</label><select id="s3" onchange="previa()"></select></div>
+
+      <div class="field"><label>Pagamento</label><select id="pagamento"><option>Pix</option><option>Dinheiro</option><option>Cartão</option><option>Outro</option></select></div>
+      <div class="field"><label>Observações</label><textarea id="obs" rows="3"></textarea></div>
+
+      <div id="previa" class="alert">Prévia do pedido.</div>
+      <div class="actions">
+        <button onclick="addVenda()">Salvar venda + cliente</button>
+        <button class="btnGreen" onclick="salvarClienteSemLimparPedido()">Salvar só cliente</button>
+        <button class="btn2" onclick="limparForm()">Limpar</button>
+        <button class="btnBlue" onclick="syncPendentes()">Sincronizar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Histórico do cliente</h2>
+      <div id="historicoClientePedido"><p class="small">Selecione um cliente para ver o histórico.</p></div>
+    </div>
+
+    <div class="card">
+      <h2>Últimas vendas</h2>
+      <div id="lista"></div>
+    </div>
+  </section>
+
+
+
+  <section id="producao" class="section">
+    <div class="card">
+      <h2>Fila de produção</h2>
+      <div class="grid">
+        <div class="field"><label>Data</label><input type="date" id="dataProducao" onchange="renderFilaProducao()"></div>
+        <div class="field"><label>Status</label><select id="filtroStatusProducao" onchange="renderFilaProducao()"><option value="">Todos</option><option>Novo</option><option>Em preparo</option><option>Pronto</option><option>Saiu para entrega</option><option>Entregue</option><option>Cancelado</option></select></div>
+      </div>
+      <div class="alert">Pedidos ordenados pelo horário de entrega. Ideal para você ver a sequência das pizzas do dia.</div>
+      <div id="filaProducao"></div>
+    </div>
+    <div class="card">
+      <h2>Resumo do dia</h2>
+      <div id="resumoProducaoDia"></div>
+    </div>
+
+    <div class="card" id="editorPedidoCard" style="display:none">
+      <h2>Editar pedido</h2>
+      <input type="hidden" id="editPedidoId">
+      <div class="grid">
+        <div class="field"><label>Horário de entrega</label><input type="time" id="editHorarioEntrega"></div>
+        <div class="field"><label>Status</label>
+          <select id="editStatusPedido">
+            <option>Novo</option>
+            <option>Em preparo</option>
+            <option>Pronto</option>
+            <option>Saiu para entrega</option>
+            <option>Entregue</option>
+            <option>Cancelado</option>
+          </select>
+        </div>
+      </div>
+      <div class="field"><label>Observação</label><textarea id="editObservacoes" rows="3"></textarea></div>
+      <div class="actions">
+        <button onclick="salvarEdicaoPedido()">Salvar alteração</button>
+        <button class="btn2" onclick="fecharEditorPedido()">Cancelar</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="operacao" class="section">
+    <div class="card">
+      <h2>Controle de massas</h2>
+      <div class="grid">
+        <div class="field"><label>Data</label><input type="date" id="massaData" onchange="renderOperacao()"></div>
+        <div class="field"><label>Massas produzidas</label><input type="number" id="massasDisponiveis" min="0" value="0" oninput="salvarOperacao()"></div>
+      </div>
+      <div class="grid">
+        <div class="field"><label>Reservadas</label><input type="number" id="massasReservadas" min="0" value="0" oninput="salvarOperacao()"></div>
+        <div class="field"><label>Segurança mínima</label><input type="number" id="metaSegurancaMassas" min="0" value="5" oninput="salvarOperacao()"></div>
+      </div>
+      <div id="resumoMassas" class="alert"></div>
+    </div>
+
+    <div class="card">
+      <h2>Produção por dia</h2>
+      <div class="field"><label>Semana</label><input type="week" id="semanaProducao" onchange="renderOperacao()"></div>
+      <div id="producaoDia"></div>
+    </div>
+
+    <div class="card">
+      <h2>Clientes parados</h2>
+      <div class="field"><label>Sem pedir há</label>
+        <select id="diasClienteParado" onchange="salvarOperacao()">
+          <option value="7">7 dias</option>
+          <option value="15">15 dias</option>
+          <option value="20">20 dias</option>
+          <option value="30">30 dias</option>
+          <option value="45">45 dias</option>
+        </select>
+      </div>
+      <div id="clientesParados"></div>
+    </div>
+
+    <div class="card">
+      <h2>Ranking VIP</h2>
+      <div class="field"><label>Mês</label><input type="month" id="mesVip" onchange="renderOperacao()"></div>
+      <div id="rankingVip"></div>
+    </div>
+
+    <div class="card">
+      <h2>Resumo para WhatsApp</h2>
+      <div class="actions">
+        <button onclick="gerarResumoWhatsApp()">Gerar</button>
+        <button class="btnGreen" onclick="copiarResumoWhatsApp()">Copiar</button>
+      </div>
+      <textarea id="resumoWhatsApp" rows="10" style="margin-top:10px"></textarea>
+    </div>
+  </section>
+
+  <section id="clientes" class="section">
+    <div class="card">
+      <h2>Cadastro de cliente</h2>
+      <input type="hidden" id="clienteEditId">
+      <div class="field"><label>Nome</label><input id="clienteNome" placeholder="Nome do cliente"></div>
+      <div class="field"><label>Telefone / WhatsApp</label><input id="clienteTelefone" placeholder="(11) 99999-9999"></div>
+      <div class="field"><label>Observação</label><textarea id="clienteObs" rows="3" placeholder="Casa, bloco, preferência..."></textarea></div>
+      <div class="actions">
+        <button onclick="salvarCliente()">Salvar</button>
+        <button class="btn2" onclick="limparClienteForm()">Limpar</button>
+        <button class="btnBlue" onclick="exportarClientesCSV()">Exportar</button>
+        <button class="btnRed" onclick="apagarClientes()">Apagar</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Relatório mensal</h2>
+      <div class="field"><label>Mês</label><input type="month" id="mesCliente" onchange="renderClientes()"></div>
+      <div class="field"><label>Buscar cliente</label><input id="buscaCliente" oninput="renderClientes()" placeholder="Nome ou telefone"></div>
+    </div>
+
+    <div class="card"><h2>Clientes</h2><div id="tabelaClientes"></div></div>
+    <div class="card"><h2>Frequência mensal</h2><div id="relatorioClientes"></div></div>
+  </section>
+
+  <section id="cardapio" class="section">
+    <div class="card">
+      <h2>Cardápio e CMV</h2>
+      <div id="cardsSabores"></div>
+    </div>
+    <div class="card">
+      <h2>Novo sabor</h2>
+      <div class="field"><label>Sabor</label><input id="novoNome"></div>
+      <div class="grid">
+        <div class="field"><label>Preço</label><input id="novoPreco" type="number" step="0.01"></div>
+        <div class="field"><label>Custo</label><input id="novoCusto" type="number" step="0.01"></div>
+      </div>
+      <div class="actions">
+        <button onclick="addSabor()">Adicionar</button>
+        <button class="btnGreen" onclick="salvarSabores()">Salvar</button>
+        <button class="btnRed" onclick="restaurarPadrao()">Padrão</button>
+        <button class="btnBlue" onclick="exportCSV()">CSV vendas</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="sync" class="section">
+    <div class="card">
+      <h2>Google Sheets</h2>
+      <div class="alert">Cole aqui a URL do Web App do Google Apps Script terminada em /exec.</div>
+      <div class="field"><label>URL do Apps Script</label><input id="scriptUrl" placeholder="https://script.google.com/.../exec"></div>
+      <div class="grid">
+        <div class="field"><label>Sincronização automática</label>
+          <select id="autoSyncAtivo" onchange="salvarAutoSyncConfig()">
+            <option value="sim">Ativada</option>
+            <option value="nao">Desativada</option>
+          </select>
+        </div>
+        <div class="field"><label>Intervalo</label>
+          <select id="autoSyncIntervalo" onchange="salvarAutoSyncConfig()">
+            <option value="15000">15 segundos</option>
+            <option value="30000">30 segundos</option>
+            <option value="60000">1 minuto</option>
+          </select>
+        </div>
+      </div>
+      <div id="ultimoSyncInfo" class="alert">Ainda não sincronizado nesta sessão.</div>
+      <div class="actions">
+        <button onclick="salvarScriptUrl()">Salvar URL</button>
+        <button class="btnGreen" onclick="testarConexao()">Testar</button>
+        <button class="btnBlue" onclick="carregarDaPlanilha()">Importar</button>
+        <button class="btn2" onclick="syncPendentes()">Enviar pendentes</button>
+      </div>
+      <div id="syncResumo" class="alert"></div>
+    </div>
+    <div class="card">
+      <h2>Código Apps Script</h2>
+      <pre id="codigoAppsScript"></pre>
+      <button class="btnBlue" onclick="copiarCodigoAppsScript()">Copiar código</button>
+    </div>
+  </section>
+
+  <section id="relatorios" class="section">
+    <div class="card">
+      <h2>Comparativo entre dias</h2>
+      <div class="grid">
+        <div class="field"><label>Dia 1</label><input type="date" id="d1" onchange="comparativo()"></div>
+        <div class="field"><label>Dia 2</label><input type="date" id="d2" onchange="comparativo()"></div>
+      </div>
+      <div id="comp"></div>
+    </div>
+    <div class="card">
+      <h2>Backup e resumo</h2>
+      <div class="actions">
+        <button class="btnBlue" onclick="baixarBackup()">Backup</button>
+        <button class="btn2" onclick="document.getElementById('fileBackup').click()">Importar</button>
+        <button class="btnGreen" onclick="resumoTexto()">Resumo</button>
+        <button class="btn2" onclick="copiarResumo()">Copiar</button>
+      </div>
+      <input type="file" id="fileBackup" accept=".json" style="display:none" onchange="importBackup(event)">
+      <textarea id="resumo" rows="10" style="margin-top:10px"></textarea>
+    </div>
+  </section>
+  <div style="height:70px"></div>
+</div>
+
+<div class="bottom-nav">
+  <button class="nav active" onclick="abaMobile('dashboard',this)"><span class="ico">📊</span>Resumo</button>
+  <button class="nav" onclick="abaMobile('vendas',this)"><span class="ico">🍕</span>Venda</button>
+  <button class="nav" onclick="abaMobile('producao',this)"><span class="ico">🔥</span>Fila</button>
+  <button class="nav" onclick="abaMobile('operacao',this)"><span class="ico">🧑‍🍳</span>Oper.</button>
+  <button class="nav" onclick="abaMobile('clientes',this)"><span class="ico">👤</span>Clientes</button>
+  <button class="nav" onclick="abaMobile('cardapio',this)"><span class="ico">💰</span>CMV</button>
+  <button class="nav" onclick="abaMobile('sync',this)"><span class="ico">☁️</span>Sheets</button>
+</div>
+
+<script>
+const LS_V="domMarioV22_vendas", LS_S="domMarioV22_sabores", LS_C="domMarioV22_config", LS_CLIENTES="domMarioV22_clientes";
+const padrao=[
+ {nome:"Margherita",preco:29.90,custo:8.13},{nome:"Calabresa com Queijo",preco:32.90,custo:12.06},
+ {nome:"Calabresa com Cebola",preco:31.90,custo:7.94},{nome:"Frango com Catupiry",preco:34.90,custo:11.50},
+ {nome:"4 Queijos",preco:39.90,custo:15.50},{nome:"Lombo com Catupiry",preco:33.90,custo:12.80},
+ {nome:"Dom Mário",preco:34.90,custo:12.50},{nome:"Calabresa Moída + Crispy + Geleia",preco:34.90,custo:13.50},
+ {nome:"Meia a meia",preco:34.90,custo:12.50},{nome:"Outro",preco:34.90,custo:12.50}
+];
+let vendas=JSON.parse(localStorage.getItem(LS_V)||"[]");
+let sabores=JSON.parse(localStorage.getItem(LS_S)||JSON.stringify(padrao));
+let clientes=JSON.parse(localStorage.getItem(LS_CLIENTES)||"[]");
+let config=JSON.parse(localStorage.getItem(LS_C)||JSON.stringify({scriptUrl:"",metaSemanal:70,combo2:59.90,combo3:89.90,autoSyncAtivo:"sim",autoSyncIntervalo:30000,ultimaSync:""}));
+const LS_OP="domMarioV23_operacao";
+let operacao=JSON.parse(localStorage.getItem(LS_OP)||JSON.stringify({massasPorData:{},diasClienteParado:15,metaSegurancaMassas:5,metaDia:15}));
+
+const APPS_SCRIPT_CODE=`const SHEET_VENDAS='Vendas';
+const SHEET_CLIENTES='Clientes';
+
+function doGet(e){
+  const action=e.parameter.action||'ping';
+  if(action==='ping') return json({ok:true,message:'Conexão ativa.'});
+  if(action==='list') return json({ok:true,vendas:readSheet(getVendasSheet()),clientes:readSheet(getClientesSheet())});
+  return json({ok:false,error:'Ação inválida.'});
+}
+
+function doPost(e){
+  const body=JSON.parse(e.postData.contents||'{}');
+  if(body.action==='addVenda'){appendVenda(getVendasSheet(),body.venda);return json({ok:true});}
+  if(body.action==='addCliente'){appendCliente(getClientesSheet(),body.cliente);return json({ok:true});}
+  if(body.action==='updateVenda'){updateVenda(getVendasSheet(),body.venda);return json({ok:true});}
+  if(body.action==='bulk'){
+    (body.vendas||[]).forEach(v=>appendVenda(getVendasSheet(),v));
+    (body.clientes||[]).forEach(c=>appendCliente(getClientesSheet(),c));
+    return json({ok:true});
+  }
+  return json({ok:false,error:'Ação inválida.'});
+}
+
+function getVendasSheet(){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  let sh=ss.getSheetByName(SHEET_VENDAS)||ss.insertSheet(SHEET_VENDAS);
+  const h=['id','data','tipo','quantidade','sabor1','sabor2','sabor3','valor','custo','lucro','cmv','pagamento','horarioEntrega','statusPedido','clienteId','clienteNome','telefone','observacoes','criadoEm'];
+  if(sh.getLastRow()===0) sh.appendRow(h);
+  return sh;
+}
+
+function getClientesSheet(){
+  const ss=SpreadsheetApp.getActiveSpreadsheet();
+  let sh=ss.getSheetByName(SHEET_CLIENTES)||ss.insertSheet(SHEET_CLIENTES);
+  const h=['id','nome','telefone','observacoes','criadoEm'];
+  if(sh.getLastRow()===0) sh.appendRow(h);
+  return sh;
+}
+
+function readSheet(sh){
+  const values=sh.getDataRange().getValues();
+  if(values.length<=1) return [];
+  const headers=values[0];
+  return values.slice(1).map(row=>{
+    const obj={};
+    headers.forEach((h,i)=>obj[h]=row[i]);
+    return obj;
+  });
+}
+
+function appendVenda(sh,v){
+  const ids=sh.getLastRow()>1?sh.getRange(2,1,sh.getLastRow()-1,1).getValues().flat().map(String):[];
+  if(ids.includes(String(v.id))) return;
+  sh.appendRow([v.id||'',v.data||'',v.tipo||'',Number(v.quantidade||0),v.sabor1||'',v.sabor2||'',v.sabor3||'',Number(v.valor||0),Number(v.custo||0),Number(v.lucro||0),Number(v.cmv||0),v.pagamento||'',v.horarioEntrega||'',v.statusPedido||'Novo',v.clienteId||'',v.clienteNome||'',v.telefone||'',v.observacoes||'',v.criadoEm||new Date()]);
+}
+
+function updateVenda(sh,v){
+  const values=sh.getDataRange().getValues();
+  if(values.length<=1) return;
+  const headers=values[0];
+  const idCol=headers.indexOf('id')+1;
+  const statusCol=headers.indexOf('statusPedido')+1;
+  const horaCol=headers.indexOf('horarioEntrega')+1;
+  const obsCol=headers.indexOf('observacoes')+1;
+  for(let r=2;r<=sh.getLastRow();r++){
+    if(String(sh.getRange(r,idCol).getValue())===String(v.id)){
+      if(statusCol>0) sh.getRange(r,statusCol).setValue(v.statusPedido||'Novo');
+      if(horaCol>0) sh.getRange(r,horaCol).setValue(v.horarioEntrega||'');
+      if(obsCol>0 && typeof v.observacoes !== 'undefined') sh.getRange(r,obsCol).setValue(v.observacoes||'');
+      return;
+    }
+  }
+}
+
+function appendCliente(sh,c){
+  const ids=sh.getLastRow()>1?sh.getRange(2,1,sh.getLastRow()-1,1).getValues().flat().map(String):[];
+  if(ids.includes(String(c.id))) return;
+  sh.appendRow([c.id||'',c.nome||'',c.telefone||'',c.observacoes||'',c.criadoEm||new Date()]);
+}
+
+function json(obj){
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
+}`;
+
+function save(){localStorage.setItem(LS_V,JSON.stringify(vendas));localStorage.setItem(LS_S,JSON.stringify(sabores));localStorage.setItem(LS_C,JSON.stringify(config));localStorage.setItem(LS_CLIENTES,JSON.stringify(clientes));localStorage.setItem(LS_OP,JSON.stringify(operacao));}
+function money(v){return Number(v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});}
+function today(){return new Date().toISOString().slice(0,10);}
+function currentMonth(){return new Date().toISOString().slice(0,7);}
+function fmt(d){return d?String(d).slice(0,10).split("-").reverse().join("/"):"";}
+function aba(id,btn){document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));if(btn)btn.classList.add("active");render();}
+function abaMobile(id,btn){document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));document.getElementById(id).classList.add("active");document.querySelectorAll(".nav").forEach(x=>x.classList.remove("active"));btn.classList.add("active");render();}
+function saboresPedido(v){return [v.sabor1,v.sabor2,v.sabor3].filter(Boolean);}
+function custoSabor(n){let s=sabores.find(x=>x.nome===n);return s?Number(s.custo):0;}
+function precoSabor(n){let s=sabores.find(x=>x.nome===n);return s?Number(s.preco):0;}
+function custoPedido(v){let arr=saboresPedido(v);if(!arr.length)return 0;let c=arr.reduce((a,n)=>a+custoSabor(n),0);if(Number(v.quantidade)>arr.length)c+=(Number(v.quantidade)-arr.length)*(c/arr.length);return c;}
+function lucroPedido(v){return Number(v.valor||0)-custoPedido(v);}
+function cmvPedido(v){return Number(v.valor)?custoPedido(v)/Number(v.valor)*100:0;}
+function clienteNomeById(id){let c=clientes.find(x=>String(x.id)===String(id));return c?c.nome:"";}
+function clienteTelefoneById(id){let c=clientes.find(x=>String(x.id)===String(id));return c?c.telefone:"";}
+function popular(){
+  ["s1","s2","s3"].forEach(id=>{document.getElementById(id).innerHTML='<option value="">Selecione</option>'+sabores.map(s=>`<option>${s.nome}</option>`).join("")});
+  const sorted=[...clientes].sort((a,b)=>a.nome.localeCompare(b.nome));
+  clienteId.innerHTML='<option value="">Cliente avulso / sem cadastro</option>'+sorted.map(c=>`<option value="${c.id}">${c.nome} - ${c.telefone||"sem telefone"}</option>`).join("");
+  filtroCliente.innerHTML='<option value="">Todos os clientes</option>'+sorted.map(c=>`<option value="${c.id}">${c.nome}</option>`).join("");
+}
+function preencherClientePedido(){let c=clientes.find(x=>String(x.id)===String(clienteId.value));if(c){clienteNomePedido.value=c.nome;telefonePedido.value=c.telefone||"";}renderHistoricoClientePedido();}
+function aplicarTipo(){
+  let t=tipo.value;
+  if(t==="Combo 2 pizzas"){
+    qtd.value=2;
+    valor.value=Number(config.combo2).toFixed(2);
+  }else if(t==="Combo 3 pizzas"){
+    qtd.value=3;
+    valor.value=Number(config.combo3).toFixed(2);
+  }else if(t==="Pizza avulsa"){
+    qtd.value=1;
+    valor.value=s1.value ? precoSabor(s1.value).toFixed(2) : "";
+  }else if(t===""){
+    qtd.value=1;
+    valor.value="";
+  }
+  previa();
+}
+function combo2(){tipo.value="Combo 2 pizzas";aplicarTipo();}
+function combo3(){tipo.value="Combo 3 pizzas";aplicarTipo();}
+function avulsa(){tipo.value="Pizza avulsa";aplicarTipo();}
+function previa(){
+  if(tipo.value==="Pizza avulsa" && s1.value){
+    qtd.value=1;
+    valor.value=precoSabor(s1.value).toFixed(2);
+  }
+  let v={quantidade:Number(qtd.value||1),valor:Number(valor.value||0),sabor1:s1.value,sabor2:s2.value,sabor3:s3.value};
+  previaEl=document.getElementById("previa");
+  previaEl.innerHTML= tipo.value ? `Valor ${money(v.valor)} • Custo ${money(custoPedido(v))} • Lucro ${money(lucroPedido(v))} • CMV ${cmvPedido(v).toFixed(1)}%` : "Escolha o tipo do pedido para começar.";
+}
+function garantirClienteDoPedido(){
+  if(clienteId.value)return clienteId.value;
+  const nome=clienteNomePedido.value.trim(), tel=telefonePedido.value.trim();
+  if(!nome&&!tel)return "";
+  let existente=clientes.find(c=>(tel&&c.telefone===tel)||(nome&&c.nome.toLowerCase()===nome.toLowerCase()));
+  if(existente){
+    clienteId.value=existente.id;
+    if(!clienteNomePedido.value) clienteNomePedido.value=existente.nome;
+    if(!telefonePedido.value) telefonePedido.value=existente.telefone||"";
+    return existente.id;
+  }
+  const novo={id:String(Date.now())+"C",nome:nome||"Cliente sem nome",telefone:tel,observacoes:"Criado automaticamente junto com a venda",criadoEm:new Date().toISOString(),sincronizado:false};
+  clientes.push(novo);
+  save();
+  syncCliente(novo);
+  popular();
+  clienteId.value=novo.id;
+  clienteNomePedido.value=novo.nome;
+  telefonePedido.value=novo.telefone||"";
+  return novo.id;
+}
+async function addVenda(){
+  const nomeDigitado = clienteNomePedido.value.trim();
+  const telefoneDigitado = telefonePedido.value.trim();
+
+  const dadosPedido={
+    data:data.value||today(),
+    tipo:tipo.value,
+    quantidade:Number(qtd.value||1),
+    sabor1:s1.value,
+    sabor2:s2.value,
+    sabor3:s3.value,
+    valor:Number(valor.value||0),
+    pagamento:pagamento.value,
+    horarioEntrega:horarioEntrega.value,
+    statusPedido:statusPedido.value,
+    clienteNome:nomeDigitado,
+    telefone:telefoneDigitado,
+    observacoes:obs.value.trim()
+  };
+
+  if(!dadosPedido.tipo){alert("Escolha o tipo do pedido.");return}
+  if(!dadosPedido.valor){alert("Informe o valor recebido.");return}
+
+  let cid = clienteId.value || "";
+
+  // 1) Se digitou nome ou telefone, cadastra/vincula cliente antes de salvar a venda
+  if(!cid && (nomeDigitado || telefoneDigitado)){
+    let existente = clientes.find(c => 
+      (telefoneDigitado && String(c.telefone||"").trim() === telefoneDigitado) ||
+      (nomeDigitado && String(c.nome||"").trim().toLowerCase() === nomeDigitado.toLowerCase())
+    );
+
+    if(existente){
+      cid = existente.id;
+      dadosPedido.clienteNome = existente.nome || nomeDigitado;
+      dadosPedido.telefone = existente.telefone || telefoneDigitado;
+    } else {
+      const novoCliente = {
+        id: String(Date.now()) + "C",
+        nome: nomeDigitado || "Cliente sem nome",
+        telefone: telefoneDigitado || "",
+        observacoes: "Criado automaticamente junto com a venda",
+        criadoEm: new Date().toISOString(),
+        sincronizado: false
+      };
+
+      clientes.push(novoCliente);
+      cid = novoCliente.id;
+      dadosPedido.clienteNome = novoCliente.nome;
+      dadosPedido.telefone = novoCliente.telefone;
+
+      save();
+      await syncCliente(novoCliente);
+    }
+  }
+
+  // 2) Se escolheu cliente do cadastro, usa os dados dele se algum campo estiver vazio
+  if(cid){
+    const c = clientes.find(x => String(x.id) === String(cid));
+    if(c){
+      dadosPedido.clienteNome = dadosPedido.clienteNome || c.nome || "";
+      dadosPedido.telefone = dadosPedido.telefone || c.telefone || "";
+    }
+  }
+
+  let venda={
+    id:String(Date.now()),
+    data:dadosPedido.data,
+    tipo:dadosPedido.tipo,
+    quantidade:dadosPedido.quantidade,
+    sabor1:dadosPedido.sabor1,
+    sabor2:dadosPedido.sabor2,
+    sabor3:dadosPedido.sabor3,
+    valor:dadosPedido.valor,
+    pagamento:dadosPedido.pagamento,
+    horarioEntrega:dadosPedido.horarioEntrega,
+    statusPedido:dadosPedido.statusPedido||"Novo",
+    clienteId:cid,
+    clienteNome:dadosPedido.clienteNome,
+    telefone:dadosPedido.telefone,
+    observacoes:dadosPedido.observacoes,
+    criadoEm:new Date().toISOString(),
+    sincronizado:false
+  };
+
+  venda.custo=custoPedido(venda);
+  venda.lucro=lucroPedido(venda);
+  venda.cmv=cmvPedido(venda);
+
+  const restantesAntes=massasRestantesDia(venda.data);
+  if(venda.data===today() && restantesAntes < venda.quantidade){
+    if(!confirm(`Atenção: existem apenas ${restantesAntes} massas disponíveis para hoje. Deseja salvar mesmo assim?`)) return;
+  }
+
+  vendas.push(venda);
+  save();
+  popular();
+
+  limparForm(false);
+  render();
+
+  await enviarVenda(venda);
+  await carregarDaPlanilhaSilencioso();
+  marcarUltimaSync();
+  render();
+}
+
+function limparForm(reset=true){if(reset)data.value=today();tipo.value="";qtd.value=1;valor.value="";s1.value="";s2.value="";s3.value="";pagamento.value="Pix";if(document.getElementById("horarioEntrega"))horarioEntrega.value="";if(document.getElementById("statusPedido"))statusPedido.value="Novo";clienteId.value="";clienteNomePedido.value="";telefonePedido.value="";obs.value="";previa();renderHistoricoClientePedido();}
+function filtrar(){let i=filtroInicio.value,f=filtroFim.value,c=filtroCliente.value;return vendas.filter(v=>(!i||v.data>=i)&&(!f||v.data<=f)&&(!c||String(v.clienteId)===String(c))).sort((a,b)=>String(b.data).localeCompare(String(a.data)));}
+function resumoCalc(lista){let fat=lista.reduce((a,v)=>a+Number(v.valor||0),0),pz=lista.reduce((a,v)=>a+Number(v.quantidade||0),0),ped=lista.length,c=lista.reduce((a,v)=>a+custoPedido(v),0);return{fat,pz,ped,c,l:fat-c,t:ped?fat/ped:0};}
+function render(){
+  scriptUrl.value=config.scriptUrl||"";metaSemanalDash.value=config.metaSemanal;if(!mesCliente.value)mesCliente.value=currentMonth();
+  let lista=filtrar(),r=resumoCalc(lista);
+  fat.textContent=money(r.fat);lucro.textContent=money(r.l);pizzas.textContent=r.pz;
+  clientesAtendidos.textContent=new Set(lista.map(v=>v.clienteId||v.telefone||v.clienteNome).filter(Boolean)).size;
+  let pct=Math.min(100,r.pz/config.metaSemanal*100||0);barraMeta.style.width=pct+"%";barraMeta.textContent=pct.toFixed(0)+"%";txtMeta.textContent=`${r.pz} de ${config.metaSemanal} pizzas. Faltam ${Math.max(0,config.metaSemanal-r.pz)}.`;
+  renderRanking(lista);renderPorDia(lista);renderLista();renderSabores();renderClientes();renderRankingClientes(lista);renderOperacao();renderMassasVenda();renderFilaProducao();comparativo();updateStatus();
+}
+function cardsFromRows(rows){return rows.join("")}
+function renderRanking(lista){let m={};lista.forEach(v=>saboresPedido(v).forEach(s=>m[s]=(m[s]||0)+1));let arr=Object.entries(m).sort((a,b)=>b[1]-a[1]);ranking.innerHTML=arr.length?cardsFromRows(arr.map(([s,q])=>`<div class="item"><div class="item-top"><div><div class="item-title">${s}</div><div class="item-sub">${q} vez(es)</div></div><strong>${q}</strong></div></div>`)):"<p class='small'>Sem dados.</p>";}
+function renderRankingClientes(lista){let m={};lista.forEach(v=>{let k=v.clienteId||v.telefone||v.clienteNome||"Sem cliente";if(!m[k])m[k]={nome:v.clienteNome||clienteNomeById(v.clienteId)||"Sem cliente",ped:0,pz:0,fat:0};m[k].ped++;m[k].pz+=Number(v.quantidade);m[k].fat+=Number(v.valor)});let arr=Object.values(m).sort((a,b)=>b.ped-a.ped).slice(0,10);rankingClientes.innerHTML=arr.length?cardsFromRows(arr.map(x=>`<div class="item"><div class="item-title">${x.nome}</div><div class="item-row"><div class="mini"><span>Pedidos</span><b>${x.ped}</b></div><div class="mini"><span>Pizzas</span><b>${x.pz}</b></div><div class="mini"><span>Total</span><b>${money(x.fat)}</b></div><div class="mini"><span>Média</span><b>${money(x.fat/x.ped)}</b></div></div></div>`)):"<p class='small'>Sem clientes.</p>";}
+function renderPorDia(lista){let m={};lista.forEach(v=>{if(!m[v.data])m[v.data]={fat:0,l:0,pz:0,ped:0};m[v.data].fat+=Number(v.valor);m[v.data].l+=lucroPedido(v);m[v.data].pz+=Number(v.quantidade);m[v.data].ped++});let arr=Object.entries(m).sort((a,b)=>b[0].localeCompare(a[0]));porDia.innerHTML=arr.length?cardsFromRows(arr.map(([d,x])=>`<div class="item"><div class="item-title">${fmt(d)}</div><div class="item-row"><div class="mini"><span>Fat.</span><b>${money(x.fat)}</b></div><div class="mini"><span>Lucro</span><b>${money(x.l)}</b></div><div class="mini"><span>Pizzas</span><b>${x.pz}</b></div><div class="mini"><span>Pedidos</span><b>${x.ped}</b></div></div></div>`)):"<p class='small'>Sem vendas.</p>";}
+function renderLista(){let lista=filtrar().sort((a,b)=>String(b.id).localeCompare(String(a.id))).slice(0,50);document.getElementById("lista").innerHTML=lista.length?cardsFromRows(lista.map(v=>`<div class="item"><div class="item-top"><div><div class="item-title">${v.clienteNome||clienteNomeById(v.clienteId)||"Cliente avulso"}</div><div class="item-sub">${fmt(v.data)} • ${v.horarioEntrega||"sem horário"} • ${v.tipo} • ${v.statusPedido||"Novo"} • ${v.sincronizado?"✅ sync":"⏳ local"}</div></div><strong>${money(v.valor)}</strong></div><div>${saboresPedido(v).map(s=>`<span class='pill'>${s}</span>`).join("")}</div><div class="item-row"><div class="mini"><span>Qtd.</span><b>${v.quantidade}</b></div><div class="mini"><span>Lucro</span><b>${money(lucroPedido(v))}</b></div></div><button class="btnRed" style="margin-top:10px" onclick='delVenda("${v.id}")'>Excluir</button></div>`)):"<p class='small'>Nenhuma venda.</p>";}
+function delVenda(id){if(!confirm("Excluir venda local?"))return;vendas=vendas.filter(v=>String(v.id)!==String(id));save();render();}
+function renderSabores(){cardsSabores.innerHTML=sabores.map((s,i)=>`<div class="item"><div class="item-title">${s.nome}</div><div class="grid"><div class="field"><label>Preço</label><input type="number" step="0.01" value="${Number(s.preco).toFixed(2)}" onchange="sabores[${i}].preco=Number(this.value);save();render()"></div><div class="field"><label>Custo</label><input type="number" step="0.01" value="${Number(s.custo).toFixed(2)}" onchange="sabores[${i}].custo=Number(this.value);save();render()"></div></div><div class="item-row"><div class="mini"><span>Lucro</span><b>${money(s.preco-s.custo)}</b></div><div class="mini"><span>CMV</span><b>${(s.custo/s.preco*100).toFixed(1)}%</b></div></div><button class="btnRed" style="margin-top:10px" onclick="remSabor(${i})">Excluir</button></div>`).join("");}
+function addSabor(){if(!novoNome.value||!novoPreco.value){alert("Informe nome e preço.");return}sabores.push({nome:novoNome.value,preco:Number(novoPreco.value),custo:Number(novoCusto.value||0)});novoNome.value=novoPreco.value=novoCusto.value="";save();popular();render();}
+function remSabor(i){sabores.splice(i,1);save();popular();render();}
+function salvarSabores(){save();popular();render();alert("Cardápio salvo.");}
+function restaurarPadrao(){if(!confirm("Restaurar padrão?"))return;sabores=JSON.parse(JSON.stringify(padrao));save();popular();render();}
+function salvarCliente(){let id=clienteEditId.value||String(Date.now())+"C";let c={id,nome:clienteNome.value.trim(),telefone:clienteTelefone.value.trim(),observacoes:clienteObs.value.trim(),criadoEm:new Date().toISOString(),sincronizado:false};if(!c.nome){alert("Informe o nome.");return}let idx=clientes.findIndex(x=>String(x.id)===String(id));if(idx>=0)clientes[idx]=c;else clientes.push(c);save();limparClienteForm();popular();render();syncCliente(c);}
+function salvarClienteRapido(){clienteNome.value=clienteNomePedido.value;clienteTelefone.value=telefonePedido.value;clienteObs.value="Criado pelo pedido";salvarCliente();}
+function salvarClienteSemLimparPedido(){
+  const nome=clienteNomePedido.value.trim();
+  const tel=telefonePedido.value.trim();
+  if(!nome && !tel){alert("Informe nome ou telefone do cliente.");return}
+  let existente=clientes.find(c=>(tel&&c.telefone===tel)||(nome&&c.nome.toLowerCase()===nome.toLowerCase()));
+  if(existente){
+    clienteId.value=existente.id;
+    alert("Cliente já cadastrado e selecionado no pedido.");
+    renderHistoricoClientePedido();
+    return;
+  }
+  const novo={id:String(Date.now())+"C",nome:nome||"Cliente sem nome",telefone:tel,observacoes:"Criado pelo pedido",criadoEm:new Date().toISOString(),sincronizado:false};
+  clientes.push(novo);
+  save();
+  popular();
+  clienteId.value=novo.id;
+  clienteNomePedido.value=novo.nome;
+  telefonePedido.value=novo.telefone||"";
+  syncCliente(novo);
+  render();
+  clienteId.value=novo.id;
+  clienteNomePedido.value=novo.nome;
+  telefonePedido.value=novo.telefone||"";
+  alert("Cliente salvo e mantive os dados do pedido.");
+}
+function limparClienteForm(){clienteEditId.value="";clienteNome.value="";clienteTelefone.value="";clienteObs.value="";}
+function editarCliente(id){let c=clientes.find(x=>String(x.id)===String(id));if(!c)return;clienteEditId.value=c.id;clienteNome.value=c.nome;clienteTelefone.value=c.telefone||"";clienteObs.value=c.observacoes||"";document.getElementById("clientes").scrollIntoView({behavior:"smooth"});}
+function excluirCliente(id){if(!confirm("Excluir cliente?"))return;clientes=clientes.filter(c=>String(c.id)!==String(id));save();popular();render();}
+function apagarClientes(){if(!confirm("Apagar todos os clientes?"))return;clientes=[];save();popular();render();}
+function renderClientes(){let busca=(buscaCliente.value||"").toLowerCase();let lista=clientes.filter(c=>!busca||c.nome.toLowerCase().includes(busca)||String(c.telefone||"").includes(busca));tabelaClientes.innerHTML=lista.length?cardsFromRows(lista.map(c=>{let vs=vendas.filter(v=>String(v.clienteId)===String(c.id)||v.telefone===c.telefone);let ult=[...vs].sort((a,b)=>String(b.data).localeCompare(String(a.data)))[0];return `<div class="item"><div class="item-top"><div><div class="item-title">${c.nome}</div><div class="item-sub">${c.telefone||"sem telefone"} • Último: ${ult?fmt(ult.data):"-"}</div></div><strong>${vs.length}x</strong></div><p class="small">${c.observacoes||""}</p><div class="actions"><button class="btn2" onclick='editarCliente("${c.id}")'>Editar</button><button class="btnRed" onclick='excluirCliente("${c.id}")'>Excluir</button></div></div>`}).join("")):"<p class='small'>Nenhum cliente cadastrado.</p>";renderRelatorioClientes();}
+function renderRelatorioClientes(){let mes=mesCliente.value||currentMonth();let map={};vendas.filter(v=>String(v.data).startsWith(mes)).forEach(v=>{let key=v.clienteId||v.telefone||v.clienteNome||"sem";if(!map[key])map[key]={nome:v.clienteNome||clienteNomeById(v.clienteId)||"Sem cadastro",tel:v.telefone||clienteTelefoneById(v.clienteId)||"-",ped:0,pz:0,fat:0,sab:{},ult:v.data};map[key].ped++;map[key].pz+=Number(v.quantidade);map[key].fat+=Number(v.valor);if(v.data>map[key].ult)map[key].ult=v.data;saboresPedido(v).forEach(s=>map[key].sab[s]=(map[key].sab[s]||0)+1)});let arr=Object.values(map).sort((a,b)=>b.ped-a.ped);relatorioClientes.innerHTML=arr.length?cardsFromRows(arr.map(x=>{let fav=Object.entries(x.sab).sort((a,b)=>b[1]-a[1])[0];return `<div class="item"><div class="item-title">${x.nome}</div><div class="item-sub">${x.tel} • Última compra: ${fmt(x.ult)}</div><div class="item-row"><div class="mini"><span>Pedidos</span><b>${x.ped}</b></div><div class="mini"><span>Pizzas</span><b>${x.pz}</b></div><div class="mini"><span>Total</span><b>${money(x.fat)}</b></div><div class="mini"><span>Favorito</span><b>${fav?fav[0]:"-"}</b></div></div></div>`}).join("")):"<p class='small'>Sem pedidos no mês.</p>";}
+function renderHistoricoClientePedido(){let cid=clienteId.value;if(!cid){historicoClientePedido.innerHTML="<p class='small'>Selecione um cliente.</p>";return}let vs=vendas.filter(v=>String(v.clienteId)===String(cid)).sort((a,b)=>String(b.data).localeCompare(String(a.data))).slice(0,5);historicoClientePedido.innerHTML=vs.length?cardsFromRows(vs.map(v=>`<div class="item"><div class="item-title">${fmt(v.data)} • ${money(v.valor)}</div><div>${saboresPedido(v).map(s=>`<span class='pill'>${s}</span>`).join("")}</div></div>`)):"<p class='small'>Cliente ainda sem pedidos.</p>";}
+
+
+function infoMassasDia(dataRef){
+  operacao.massasPorData=operacao.massasPorData||{};
+  return operacao.massasPorData[dataRef]||{disponiveis:0,reservadas:0,metaSeguranca:operacao.metaSegurancaMassas||5};
+}
+function massasRestantesDia(dataRef){
+  const info=infoMassasDia(dataRef);
+  return Number(info.disponiveis||0)-Number(info.reservadas||0)-pizzasVendidasDia(dataRef);
+}
+function salvarMetaDiaVenda(){
+  operacao.metaDia=Number(metaDiaVenda.value||0);
+  save();
+  renderMassasVenda();
+}
+function atualizarMassasHojeVenda(){
+  const d=today();
+  operacao.massasPorData=operacao.massasPorData||{};
+  const info=infoMassasDia(d);
+  operacao.massasPorData[d]={...info,disponiveis:Number(massasHojeVenda.value||0)};
+  save();
+  if(document.getElementById("massaData") && massaData.value===d){
+    massasDisponiveis.value=massasHojeVenda.value;
+  }
+  renderMassasVenda();
+  renderOperacao();
+}
+function renderMassasVenda(){
+  if(!document.getElementById("massasVendaResumo")) return;
+  const d=today();
+  const info=infoMassasDia(d);
+  const vendidas=pizzasVendidasDia(d);
+  const produzidas=Number(info.disponiveis||0);
+  const reservadas=Number(info.reservadas||0);
+  const restantes=produzidas-reservadas-vendidas;
+  const metaDia=Number(operacao.metaDia||15);
+  const faltamMeta=Math.max(0,metaDia-vendidas);
+  if(document.getElementById("metaDiaVenda")) metaDiaVenda.value=metaDia;
+  if(document.getElementById("massasHojeVenda")) massasHojeVenda.value=produzidas;
+
+  let classe="";
+  let aviso="✅ Estoque confortável para vender.";
+  if(restantes<=4){classe="bad";aviso="🔴 Atenção: restam poucas massas para hoje.";}
+  else if(restantes<=9){aviso="🟡 Estoque médio. Bom divulgar urgência.";}
+  massasVendaResumo.className="alert "+classe;
+  massasVendaResumo.innerHTML=`<b>${fmt(d)}</b><br>
+    Produzidas: <b>${produzidas}</b> • Vendidas: <b>${vendidas}</b> • Reservadas: <b>${reservadas}</b><br>
+    Disponíveis agora: <b style="font-size:22px">${restantes}</b><br>
+    Meta do dia: <b>${metaDia}</b> pizzas • Faltam: <b>${faltamMeta}</b><br>
+    ${aviso}`;
+}
+function vendasDoDia(dataRef){return vendas.filter(v=>String(v.data).slice(0,10)===dataRef);}
+function pizzasVendidasDia(dataRef){return vendasDoDia(dataRef).reduce((s,v)=>s+Number(v.quantidade||0),0);}
+function salvarOperacao(){
+  if(!document.getElementById("massaData")) return;
+  const d=massaData.value||today();
+  operacao.massasPorData=operacao.massasPorData||{};
+  operacao.massasPorData[d]={disponiveis:Number(massasDisponiveis.value||0),reservadas:Number(massasReservadas.value||0),metaSeguranca:Number(metaSegurancaMassas.value||5)};
+  operacao.diasClienteParado=Number(diasClienteParado.value||15);
+  operacao.metaSegurancaMassas=Number(metaSegurancaMassas.value||5);
+  save();renderOperacao();
+}
+function carregarOperacaoCampos(){
+  if(!document.getElementById("massaData")) return;
+  if(!massaData.value) massaData.value=today();
+  if(!mesVip.value) mesVip.value=currentMonth();
+  const d=massaData.value||today();
+  const info=(operacao.massasPorData&&operacao.massasPorData[d])||{disponiveis:0,reservadas:0,metaSeguranca:operacao.metaSegurancaMassas||5};
+  massasDisponiveis.value=info.disponiveis||0;
+  massasReservadas.value=info.reservadas||0;
+  metaSegurancaMassas.value=info.metaSeguranca||operacao.metaSegurancaMassas||5;
+  diasClienteParado.value=String(operacao.diasClienteParado||15);
+}
+function weekDatesFromInput(weekValue){
+  const base=new Date();
+  if(!weekValue){
+    const day=base.getDay(), monday=new Date(base);
+    monday.setDate(base.getDate()-((day+6)%7));
+    return [...Array(7)].map((_,i)=>{let x=new Date(monday);x.setDate(monday.getDate()+i);return x.toISOString().slice(0,10);});
+  }
+  const parts=weekValue.split("-W"), year=Number(parts[0]), wk=Number(parts[1]);
+  const simple=new Date(year,0,1+(wk-1)*7), dow=simple.getDay(), monday=new Date(simple);
+  monday.setDate(simple.getDate()-((dow+6)%7));
+  return [...Array(7)].map((_,i)=>{let x=new Date(monday);x.setDate(monday.getDate()+i);return x.toISOString().slice(0,10);});
+}
+function ultimaVendaCliente(c){
+  const vs=vendas.filter(v=>String(v.clienteId)===String(c.id)||String(v.telefone||"")===String(c.telefone||""));
+  if(!vs.length) return null;
+  return [...vs].sort((a,b)=>String(b.data).localeCompare(String(a.data)))[0];
+}
+function diasDesde(dataStr){
+  if(!dataStr) return 9999;
+  const a=new Date(String(dataStr).slice(0,10)+"T00:00:00"), b=new Date(today()+"T00:00:00");
+  return Math.floor((b-a)/(1000*60*60*24));
+}
+function renderOperacao(){
+  if(!document.getElementById("massaData")) return;
+  carregarOperacaoCampos();
+  const d=massaData.value||today(), vendidas=pizzasVendidasDia(d);
+  const disp=Number(massasDisponiveis.value||0), reserv=Number(massasReservadas.value||0), meta=Number(metaSegurancaMassas.value||5);
+  const restante=disp-reserv-vendidas;
+  resumoMassas.className="alert "+(restante>=meta?"ok":"");
+  resumoMassas.innerHTML=`<b>${fmt(d)}</b><br>Produzidas: <b>${disp}</b><br>Vendidas: <b>${vendidas}</b><br>Reservadas: <b>${reserv}</b><br>Restam: <b>${restante}</b><br>${restante<meta?"⚠️ Estoque abaixo da segurança.":"✅ Estoque confortável."}`;
+
+  const datas=weekDatesFromInput(semanaProducao.value);
+  producaoDia.innerHTML=datas.map(x=>{
+    const vend=pizzasVendidasDia(x), info=(operacao.massasPorData&&operacao.massasPorData[x])||{};
+    const prod=Number(info.disponiveis||0), reserva=Number(info.reservadas||0);
+    const sugerida=Math.max(0,vend+reserva+Number(operacao.metaSegurancaMassas||5)-prod);
+    return `<div class="item"><div class="item-title">${fmt(x)}</div><div class="item-row"><div class="mini"><span>Vendidas</span><b>${vend}</b></div><div class="mini"><span>Produzidas</span><b>${prod}</b></div><div class="mini"><span>Reservadas</span><b>${reserva}</b></div><div class="mini"><span>Sugestão</span><b>${sugerida}</b></div></div></div>`;
+  }).join("");
+
+  const limite=Number(diasClienteParado.value||15);
+  const parados=clientes.map(c=>({c,ult:ultimaVendaCliente(c)})).filter(x=>x.ult&&diasDesde(x.ult.data)>=limite).sort((a,b)=>diasDesde(b.ult.data)-diasDesde(a.ult.data));
+  clientesParados.innerHTML=parados.length?parados.map(x=>{
+    const msg=`Oi ${x.c.nome}, tudo bem? Hoje teremos pizza artesanal da Dom Mário. Quer reservar a sua?`;
+    return `<div class="item"><div class="item-title">${x.c.nome}</div><div class="item-sub">${x.c.telefone||"sem telefone"} • ${diasDesde(x.ult.data)} dias sem pedir • último: ${fmt(x.ult.data)}</div><div class="actions"><button class="btnGreen" onclick='copiarTexto("${encodeURIComponent(msg)}")'>Copiar msg</button><button class="btn2" onclick='preencherClientePorId("${x.c.id}")'>Novo pedido</button></div></div>`;
+  }).join(""):"<p class='small'>Nenhum cliente parado nesse período.</p>";
+
+  const mes=mesVip.value||currentMonth(), map={};
+  vendas.filter(v=>String(v.data).startsWith(mes)).forEach(v=>{
+    const key=v.clienteId||v.telefone||v.clienteNome||"sem";
+    if(!map[key]) map[key]={nome:v.clienteNome||clienteNomeById(v.clienteId)||"Sem cadastro",tel:v.telefone||clienteTelefoneById(v.clienteId)||"",ped:0,pz:0,fat:0,sab:{}};
+    map[key].ped++;map[key].pz+=Number(v.quantidade||0);map[key].fat+=Number(v.valor||0);
+    saboresPedido(v).forEach(s=>map[key].sab[s]=(map[key].sab[s]||0)+1);
+  });
+  const vip=Object.values(map).sort((a,b)=>b.fat-a.fat).slice(0,10);
+  rankingVip.innerHTML=vip.length?vip.map((x,i)=>{
+    const fav=Object.entries(x.sab).sort((a,b)=>b[1]-a[1])[0];
+    return `<div class="item"><div class="item-top"><div><div class="item-title">${i+1}. ${x.nome}</div><div class="item-sub">${x.tel||"sem telefone"} • favorito: ${fav?fav[0]:"-"}</div></div><strong>${money(x.fat)}</strong></div><div class="item-row"><div class="mini"><span>Pedidos</span><b>${x.ped}</b></div><div class="mini"><span>Pizzas</span><b>${x.pz}</b></div></div></div>`;
+  }).join(""):"<p class='small'>Sem vendas no mês.</p>";
+}
+function preencherClientePorId(id){
+  const c=clientes.find(x=>String(x.id)===String(id));if(!c)return;
+  document.querySelectorAll(".section").forEach(x=>x.classList.remove("active"));document.getElementById("vendas").classList.add("active");
+  clienteId.value=c.id;clienteNomePedido.value=c.nome;telefonePedido.value=c.telefone||"";renderHistoricoClientePedido();
+}
+function copiarTexto(txt){navigator.clipboard.writeText(decodeURIComponent(txt)).then(()=>alert("Mensagem copiada."));}
+function gerarResumoWhatsApp(){
+  const lista=filtrar(), r=resumoCalc(lista), d=massaData.value||today();
+  const restantes=Number(massasDisponiveis.value||0)-Number(massasReservadas.value||0)-pizzasVendidasDia(d);
+  let sab={}; lista.forEach(v=>saboresPedido(v).forEach(s=>sab[s]=(sab[s]||0)+1));
+  const topSabor=Object.entries(sab).sort((a,b)=>b[1]-a[1])[0];
+  resumoWhatsApp.value=`🍕 Resumo Dom Mário\n\nFaturamento: ${money(r.fat)}\nLucro bruto estimado: ${money(r.l)}\nPizzas vendidas: ${r.pz}\nPedidos: ${r.ped}\nClientes atendidos: ${new Set(lista.map(v=>v.clienteId||v.telefone||v.clienteNome).filter(Boolean)).size}\n\nMassas hoje (${fmt(d)}):\nVendidas: ${pizzasVendidasDia(d)}\nDisponíveis agora: ${restantes}\n\nSabor mais vendido: ${topSabor?topSabor[0]+" ("+topSabor[1]+"x)":"-"}`;
+}
+function copiarResumoWhatsApp(){if(!resumoWhatsApp.value)gerarResumoWhatsApp();resumoWhatsApp.select();document.execCommand("copy");alert("Resumo copiado.");}
+
+
+function proximoStatus(status){
+  const ordem=["Novo","Em preparo","Pronto","Saiu para entrega","Entregue"];
+  const i=ordem.indexOf(status||"Novo");
+  return ordem[Math.min(i+1,ordem.length-1)];
+}
+function atualizarStatusPedido(id,novoStatus){
+  const v=vendas.find(x=>String(x.id)===String(id));
+  if(!v)return;
+  v.statusPedido=novoStatus;
+  save();
+  enviarAtualizacaoVendaCompleta(v);
+  render();
+  renderFilaProducao();
+}
+async function enviarAtualizacaoVenda(v){
+  if(!config.scriptUrl) return;
+  try{
+    await fetch(config.scriptUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify({action:"updateVenda",venda:{id:v.id,statusPedido:v.statusPedido||"Novo",horarioEntrega:v.horarioEntrega||""}})});
+    marcarUltimaSync();
+  }catch(e){}
+}
+
+function minutosAgora(){
+  const n=new Date();
+  return n.getHours()*60+n.getMinutes();
+}
+function minutosHora(h){
+  if(!h) return null;
+  const p=String(h).split(":");
+  return Number(p[0])*60+Number(p[1]);
+}
+function atrasoTexto(v){
+  if(!v.horarioEntrega || String(v.data).slice(0,10)!==today()) return "";
+  const status=v.statusPedido||"Novo";
+  if(status==="Entregue" || status==="Cancelado") return "";
+  const dif=minutosAgora()-minutosHora(v.horarioEntrega);
+  if(dif>0) return `🔴 ATRASADO ${dif} min`;
+  if(dif>=-15) return `🟡 Faltam ${Math.abs(dif)} min`;
+  return "";
+}
+async function enviarAtualizacaoVendaCompleta(v){
+  if(!config.scriptUrl) return;
+  try{
+    await fetch(config.scriptUrl,{
+      method:"POST",
+      mode:"no-cors",
+      headers:{"Content-Type":"text/plain"},
+      body:JSON.stringify({
+        action:"updateVenda",
+        venda:{
+          id:v.id,
+          statusPedido:v.statusPedido||"Novo",
+          horarioEntrega:v.horarioEntrega||"",
+          observacoes:v.observacoes||""
+        }
+      })
+    });
+    marcarUltimaSync();
+  }catch(e){}
+}
+function abrirEditorPedido(id){
+  const v=vendas.find(x=>String(x.id)===String(id));
+  if(!v) return;
+  editPedidoId.value=v.id;
+  editHorarioEntrega.value=v.horarioEntrega||"";
+  editStatusPedido.value=v.statusPedido||"Novo";
+  editObservacoes.value=v.observacoes||"";
+  editorPedidoCard.style.display="block";
+  editorPedidoCard.scrollIntoView({behavior:"smooth",block:"center"});
+}
+function fecharEditorPedido(){
+  editorPedidoCard.style.display="none";
+  editPedidoId.value="";
+}
+async function salvarEdicaoPedido(){
+  const v=vendas.find(x=>String(x.id)===String(editPedidoId.value));
+  if(!v) return;
+  v.horarioEntrega=editHorarioEntrega.value;
+  v.statusPedido=editStatusPedido.value||"Novo";
+  v.observacoes=editObservacoes.value.trim();
+  save();
+  await enviarAtualizacaoVendaCompleta(v);
+  fecharEditorPedido();
+  render();
+  renderFilaProducao();
+}
+function renderFilaProducao(){
+  if(!document.getElementById("filaProducao"))return;
+  if(!dataProducao.value)dataProducao.value=today();
+  const dataRef=dataProducao.value;
+  const filtro=filtroStatusProducao.value||"";
+  let lista=vendas.filter(v=>String(v.data).slice(0,10)===dataRef);
+  if(filtro)lista=lista.filter(v=>(v.statusPedido||"Novo")===filtro);
+  lista.sort((a,b)=>(a.horarioEntrega||"99:99").localeCompare(b.horarioEntrega||"99:99"));
+
+  filaProducao.innerHTML=lista.length?lista.map(v=>{
+    const status=v.statusPedido||"Novo";
+    const prox=proximoStatus(status);
+    const atraso=atrasoTexto(v);
+    const min=minutosHora(v.horarioEntrega);
+    const dif=(String(v.data).slice(0,10)===today() && min!==null)?min-minutosAgora():9999;
+    const cls=atraso.startsWith("🔴")?"late":(atraso.startsWith("🟡")?"warn":"");
+    return `<div class="item ${cls}">
+      <div class="item-top">
+        <div>
+          <div class="item-title">${v.horarioEntrega||"Sem horário"} • ${v.clienteNome||clienteNomeById(v.clienteId)||"Cliente avulso"}</div>
+          <div class="item-sub">${v.telefone||clienteTelefoneById(v.clienteId)||""} • ${v.tipo} • ${v.quantidade} pizza(s)</div>
+          ${atraso?`<div class="item-sub"><b>${atraso}</b></div>`:""}
+        </div>
+        <strong>${status}</strong>
+      </div>
+      <div style="margin-top:8px">${saboresPedido(v).map(s=>`<span class='pill'>${s}</span>`).join("")}</div>
+      ${v.observacoes?`<p class="small"><b>Obs:</b> ${v.observacoes}</p>`:""}
+      <div class="actions">
+        <button class="btnGreen" onclick='atualizarStatusPedido("${v.id}","${prox}")'>Avançar: ${prox}</button>
+        <button class="btn2" onclick='abrirEditorPedido("${v.id}")'>Editar</button>
+        <button class="btnBlue" onclick='atualizarStatusPedido("${v.id}","Pronto")'>Pronto</button>
+        <button class="btnRed" onclick='atualizarStatusPedido("${v.id}","Cancelado")'>Cancelar</button>
+      </div>
+    </div>`;
+  }).join(""):"<p class='small'>Nenhum pedido para esta data.</p>";
+
+  const resumo=resumoCalc(vendas.filter(v=>String(v.data).slice(0,10)===dataRef));
+  const porStatus={};
+  const atrasados=vendas.filter(v=>String(v.data).slice(0,10)===dataRef && atrasoTexto(v).startsWith("🔴")).length;
+  vendas.filter(v=>String(v.data).slice(0,10)===dataRef).forEach(v=>{
+    const s=v.statusPedido||"Novo";
+    porStatus[s]=(porStatus[s]||0)+Number(v.quantidade||0);
+  });
+  resumoProducaoDia.innerHTML=`<div class="item ${atrasados?'late':''}">
+    <div class="item-title">${fmt(dataRef)}</div>
+    <div class="item-row">
+      <div class="mini"><span>Pizzas</span><b>${resumo.pz}</b></div>
+      <div class="mini"><span>Pedidos</span><b>${resumo.ped}</b></div>
+      <div class="mini"><span>Atrasados</span><b>${atrasados}</b></div>
+      <div class="mini"><span>Faturamento</span><b>${money(resumo.fat)}</b></div>
+    </div>
+    <p class="small">${Object.entries(porStatus).map(([s,q])=>`${s}: ${q}`).join(" • ")||"Sem status"}</p>
+  </div>`;
+}
+
+function salvarConfigDash(){config.metaSemanal=Number(metaSemanalDash.value||70);save();render();}
+function salvarScriptUrl(){
+  config.scriptUrl=scriptUrl.value.trim();
+  save();
+  updateStatus();
+  iniciarAutoSync();
+  alert("URL salva.");
+}
+function updateStatus(){let pendV=vendas.filter(v=>!v.sincronizado).length, pendC=clientes.filter(c=>!c.sincronizado).length;syncResumo.innerHTML=`Vendas locais: <b>${vendas.length}</b><br>Clientes: <b>${clientes.length}</b><br>Pendentes: <b>${pendV} vendas</b> e <b>${pendC} clientes</b>`;statusSync.className="alert "+(config.scriptUrl?"ok":"");statusSync.innerHTML=config.scriptUrl?`🟢 Online • Pendentes: <b>${pendV} vendas</b> e <b>${pendC} clientes</b><br>Última sync: <b>${config.ultimaSync||"aguardando"}</b>`:"🔴 Modo local. Configure o Google Sheets."; carregarAutoSyncCampos();}
+
+let autoSyncTimer=null;
+let syncEmAndamento=false;
+
+function salvarAutoSyncConfig(){
+  if(document.getElementById("autoSyncAtivo")) config.autoSyncAtivo=autoSyncAtivo.value;
+  if(document.getElementById("autoSyncIntervalo")) config.autoSyncIntervalo=Number(autoSyncIntervalo.value||30000);
+  save();
+  iniciarAutoSync();
+  updateStatus();
+}
+
+function carregarAutoSyncCampos(){
+  if(document.getElementById("autoSyncAtivo")) autoSyncAtivo.value=config.autoSyncAtivo||"sim";
+  if(document.getElementById("autoSyncIntervalo")) autoSyncIntervalo.value=String(config.autoSyncIntervalo||30000);
+  if(document.getElementById("ultimoSyncInfo")){
+    ultimoSyncInfo.className="alert "+(config.ultimaSync?"ok":"");
+    ultimoSyncInfo.innerHTML=config.ultimaSync ? `Última sincronização: <b>${config.ultimaSync}</b>` : "Ainda não sincronizado nesta sessão.";
+  }
+}
+
+function marcarUltimaSync(){
+  const agora=new Date();
+  config.ultimaSync=agora.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit",second:"2-digit"});
+  save();
+  carregarAutoSyncCampos();
+}
+
+async function sincronizarTudoSilencioso(){
+  if(syncEmAndamento || !config.scriptUrl) return;
+  syncEmAndamento=true;
+  try{
+    const pendC=clientes.filter(c=>!c.sincronizado);
+    const pendV=vendas.filter(v=>!v.sincronizado);
+
+    for(const c of pendC){ await syncCliente(c); }
+    for(const v of pendV){ await enviarVenda(v); }
+
+    await carregarDaPlanilhaSilencioso();
+    marcarUltimaSync();
+  }catch(e){
+    // mantém pendências locais para tentar novamente
+  }finally{
+    syncEmAndamento=false;
+    render();
+  }
+}
+
+function iniciarAutoSync(){
+  if(autoSyncTimer) clearInterval(autoSyncTimer);
+  carregarAutoSyncCampos();
+  if(!config.scriptUrl || config.autoSyncAtivo==="nao") return;
+  const intervalo=Number(config.autoSyncIntervalo||30000);
+  sincronizarTudoSilencioso();
+  autoSyncTimer=setInterval(()=>{sincronizarTudoSilencioso(); renderFilaProducao();}, intervalo);
+}
+
+async function carregarDaPlanilhaSilencioso(){
+  if(!config.scriptUrl) return;
+  const r=await fetch(config.scriptUrl+"?action=list");
+  const j=await r.json();
+  if(!j.ok) throw new Error("Erro ao ler planilha");
+
+  let mudou=false;
+
+  const idsC=new Set(clientes.map(c=>String(c.id)));
+  (j.clientes||[]).forEach(c=>{
+    if(!idsC.has(String(c.id))){
+      clientes.push({id:String(c.id),nome:c.nome,telefone:c.telefone,observacoes:c.observacoes,criadoEm:c.criadoEm,sincronizado:true});
+      mudou=true;
+    }
+  });
+
+  const idsV=new Set(vendas.map(v=>String(v.id)));
+  (j.vendas||[]).forEach(v=>{
+    const id=String(v.id);
+    if(!idsV.has(id)){
+      vendas.push({
+        id:id,
+        data:String(v.data).slice(0,10),
+        tipo:v.tipo,
+        quantidade:Number(v.quantidade),
+        sabor1:v.sabor1,
+        sabor2:v.sabor2,
+        sabor3:v.sabor3,
+        valor:Number(v.valor),
+        pagamento:v.pagamento,
+        horarioEntrega:v.horarioEntrega,
+        statusPedido:v.statusPedido||"Novo",
+        clienteId:v.clienteId,
+        clienteNome:v.clienteNome,
+        telefone:v.telefone,
+        observacoes:v.observacoes,
+        sincronizado:true
+      });
+      mudou=true;
+    }else{
+      const local=vendas.find(x=>String(x.id)===id);
+      if(local){
+        // Atualiza campos colaborativos vindos da planilha, principalmente status/horário
+        if(v.statusPedido && local.statusPedido!==v.statusPedido){ local.statusPedido=v.statusPedido; mudou=true; }
+        if(v.horarioEntrega && local.horarioEntrega!==v.horarioEntrega){ local.horarioEntrega=v.horarioEntrega; mudou=true; }
+        if(typeof v.observacoes !== "undefined" && local.observacoes!==v.observacoes){ local.observacoes=v.observacoes; mudou=true; }
+      }
+    }
+  });
+
+  if(mudou){
+    save();
+    popular();
+  }
+}
+
+async function testarConexao(){if(!config.scriptUrl){alert("Cole e salve a URL primeiro.");return}try{let r=await fetch(config.scriptUrl+"?action=ping");let j=await r.json();alert(j.message||"Conectado.");}catch(e){alert("Não consegui conectar. Verifique a URL e permissão do Web App.");}}
+async function enviarVenda(v){if(!config.scriptUrl)return false;try{let payload={...v,custo:custoPedido(v),lucro:lucroPedido(v),cmv:cmvPedido(v)};await fetch(config.scriptUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify({action:"addVenda",venda:payload})});let item=vendas.find(x=>String(x.id)===String(v.id));if(item)item.sincronizado=true;save();return true;}catch(e){return false;}}
+async function syncCliente(c){if(!config.scriptUrl)return false;try{await fetch(config.scriptUrl,{method:"POST",mode:"no-cors",headers:{"Content-Type":"text/plain"},body:JSON.stringify({action:"addCliente",cliente:c})});let item=clientes.find(x=>String(x.id)===String(c.id));if(item)item.sincronizado=true;save();return true;}catch(e){return false;}}
+async function syncPendentes(){
+  if(!config.scriptUrl){alert("Configure a URL primeiro.");return}
+  await sincronizarTudoSilencioso();
+  alert("Sincronização concluída.");
+}
+async function carregarDaPlanilha(){
+  if(!config.scriptUrl){alert("Configure a URL primeiro.");return}
+  try{
+    await carregarDaPlanilhaSilencioso();
+    marcarUltimaSync();
+    popular();
+    render();
+    alert("Dados importados da planilha.");
+  }catch(e){
+    alert("Não consegui importar. Verifique o Apps Script.");
+  }
+}
+function comparativo(){if(!d1.value||!d2.value){comp.innerHTML="<p class='small'>Escolha dois dias.</p>";return}let a=resumoCalc(vendas.filter(v=>v.data===d1.value)),b=resumoCalc(vendas.filter(v=>v.data===d2.value));comp.innerHTML=`<div class="item"><div class="item-title">${fmt(d1.value)} x ${fmt(d2.value)}</div><div class="item-row"><div class="mini"><span>Dif. fat.</span><b>${money(b.fat-a.fat)}</b></div><div class="mini"><span>Dif. lucro</span><b>${money(b.l-a.l)}</b></div><div class="mini"><span>Dif. pizzas</span><b>${b.pz-a.pz}</b></div><div class="mini"><span>Dif. pedidos</span><b>${b.ped-a.ped}</b></div></div></div>`;}
+function exportCSV(){let rows=[["Data","Cliente","Telefone","Tipo","Qtd","Sabor1","Sabor2","Sabor3","Valor","Custo","Lucro","Pagamento","Obs"],...vendas.map(v=>[v.data,v.clienteNome,v.telefone,v.tipo,v.quantidade,v.sabor1,v.sabor2,v.sabor3,v.valor,custoPedido(v),lucroPedido(v),v.pagamento,v.observacoes])];baixarCSV("vendas-dom-mario-2-2.csv",rows);}
+function exportarClientesCSV(){let rows=[["Nome","Telefone","Observações","Criado em"],...clientes.map(c=>[c.nome,c.telefone,c.observacoes,c.criadoEm])];baixarCSV("clientes-dom-mario.csv",rows);}
+function baixarCSV(nome,rows){let csv=rows.map(r=>r.map(c=>`"${String(c??"").replace(/"/g,'""')}"`).join(";")).join("\n");let blob=new Blob([csv],{type:"text/csv;charset=utf-8"});let url=URL.createObjectURL(blob);let a=document.createElement("a");a.href=url;a.download=nome;a.click();URL.revokeObjectURL(url);}
+function baixarBackup(){let blob=new Blob([JSON.stringify({vendas,sabores,config,clientes,operacao},null,2)],{type:"application/json"});let url=URL.createObjectURL(blob);let a=document.createElement("a");a.href=url;a.download="backup-dom-mario-v2-2.json";a.click();URL.revokeObjectURL(url);}
+function importBackup(e){let f=e.target.files[0];if(!f)return;let rd=new FileReader();rd.onload=()=>{let b=JSON.parse(rd.result);vendas=b.vendas||[];sabores=b.sabores||padrao;config=b.config||config;clientes=b.clientes||[];operacao=b.operacao||operacao;save();init();};rd.readAsText(f);}
+function resumoTexto(){let r=resumoCalc(filtrar());resumo.value=`RELATÓRIO DOM MÁRIO 2.2\n\nFaturamento: ${money(r.fat)}\nLucro bruto: ${money(r.l)}\nPizzas vendidas: ${r.pz}\nPedidos: ${r.ped}\nClientes cadastrados: ${clientes.length}\nClientes atendidos: ${new Set(filtrar().map(v=>v.clienteId||v.telefone||v.clienteNome).filter(Boolean)).size}\nPendentes: ${vendas.filter(v=>!v.sincronizado).length} vendas e ${clientes.filter(c=>!c.sincronizado).length} clientes`;}
+function copiarResumo(){if(!resumo.value)resumoTexto();resumo.select();document.execCommand("copy");alert("Resumo copiado.");}
+function copiarCodigoAppsScript(){navigator.clipboard.writeText(APPS_SCRIPT_CODE);alert("Código copiado.");}
+function init(){codigoAppsScript.textContent=APPS_SCRIPT_CODE;data.value=today();if(document.getElementById("massaData"))massaData.value=today();if(document.getElementById("dataProducao"))dataProducao.value=today();if(document.getElementById("mesVip"))mesVip.value=currentMonth();mesCliente.value=currentMonth();popular();limparForm();render();iniciarAutoSync();}
+document.addEventListener("visibilitychange",()=>{
+  if(!document.hidden && config.autoSyncAtivo!=="nao"){
+    sincronizarTudoSilencioso();
+  }
+});
+window.addEventListener("online",()=>sincronizarTudoSilencioso());
+init();
+</script>
+</body>
+</html>
